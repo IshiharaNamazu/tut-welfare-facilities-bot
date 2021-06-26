@@ -12,7 +12,9 @@ const getOpeningHours = async () => {
   const json = JSON.parse(await fs.readFile(JSON_PATH, { encoding: 'utf8' }));
 
   for (const key in json) {
-    if (dayjs.isBetween(key)) {
+    const [start, end] = key.split(', ');
+
+    if (!end || dayjs.isBetween(start, end)) {
       return [
         {
           name: '食堂',

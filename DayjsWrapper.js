@@ -18,7 +18,7 @@ export class DayjsWrapper {
     return dayjs.tz().format(format);
   }
 
-  isBetween(date) {
-    return dayjs.tz().isBetween(...date.split(', '), 'year', '[]');
+  isBetween(start, end) {
+    return dayjs.tz().isBetween(start, end, 'year', '[]');
   }
 }
