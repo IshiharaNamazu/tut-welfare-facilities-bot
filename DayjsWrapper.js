@@ -5,6 +5,8 @@ import isBetween from 'dayjs/plugin/isBetween.js';
 import 'dayjs/locale/ja.js';
 
 export class DayjsWrapper {
+  #today;
+
   constructor() {
     // Day.jsの設定諸々
     dayjs.extend(timezone);
@@ -12,17 +14,27 @@ export class DayjsWrapper {
     dayjs.extend(isBetween);
     dayjs.tz.setDefault('Asia/Tokyo');
     dayjs.locale('ja');
+
+    this.#today = dayjs.tz();
   }
 
   getCurrentDate(format) {
-    return dayjs.tz().format(format);
+    return this.#today.format(format);
   }
 
-  getCurrentDay() {
-    return dayjs.day();
+  getWeekdayOrNot() {
+    const dayOfWeek = this.#today.day();
+
+    if (dayOfWeek == 0 || dayOfWeek == 6) {
+      return 'weekend';
+    } else {
+      return 'weekday';
+    }
   }
 
   isBetween(start, end) {
-    return dayjs.tz().isBetween(start, end, 'year', '[]');
+    if (!start || !end) return false;
+
+    return this.#today.isBetween(start, end, 'day', '[]');
   }
 }

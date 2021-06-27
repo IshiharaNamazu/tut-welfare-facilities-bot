@@ -10,68 +10,45 @@ const dayjs = new DayjsWrapper();
 // JSONからデータ整形
 const getOpeningHours = async () => {
   const json = JSON.parse(await fs.readFile(JSON_PATH, { encoding: 'utf8' }));
+  const today = dayjs.getCurrentDate('YYYY-MM-DD');
 
-  for (const key in json) {
-    const [start, end] = key.split(', ');
+  let key = dayjs.getWeekdayOrNot();
 
-    if (!end || dayjs.isBetween(start, end)) {
-      return [
-        {
-          name: '食堂',
-          value: json[key].restaurant,
-        },
-        {
-          name: '喫茶',
-          value: json[key].cafeteria,
-        },
-        {
-          name: '売店',
-          value: json[key].shop,
-        },
-      ];
+  if (today in json) {
+    key = today;
+  } else {
+    for (const item in json) {
+      const [start, end] = item.split(', ');
+
+      if (dayjs.isBetween(start, end)) {
+        key = item;
+      }
     }
   }
 
-  if(!("holiday" in json) || !("weekday" in json))return [//休日と平日のデータ無かったらデータ無しで返す
+  if (json[key] in json) {
+    return [
+      {
+        name: '食堂',
+        value: json[date].restaurant,
+      },
+      {
+        name: '喫茶',
+        value: json[date].cafeteria,
+      },
+      {
+        name: '売店',
+        value: json[date].shop,
+      },
+    ];
+  }
+
+  return [
     {
       name: 'エラー',
       value: 'データが見つかりません',
     },
   ];
-
-  if(dayjs.getCurrentDay()==0 || dayjs.getCurrentDay()==6){//土日
-    return [
-      {
-        name: '食堂',
-        value: json["holiday"].restaurant,
-      },
-      {
-        name: '喫茶',
-        value: json["holiday"].cafeteria,
-      },
-      {
-        name: '売店',
-        value: json["holiday"].shop,
-      },
-    ];
-  }
-  else{//平日
-    return [
-      {
-        name: '食堂',
-        value: json["weekday"].restaurant,
-      },
-      {
-        name: '喫茶',
-        value: json["weekday"].cafeteria,
-      },
-      {
-        name: '売店',
-        value: json["weekday"].shop,
-      },
-    ];
-  }
-
 };
 
 // ここから下はdiscord.js
