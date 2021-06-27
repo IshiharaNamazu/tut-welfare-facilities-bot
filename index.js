@@ -32,12 +32,46 @@ const getOpeningHours = async () => {
     }
   }
 
-  return [
+  if(!("holiday" in json) || !("weekday" in json))return [//休日と平日のデータ無かったらデータ無しで返す
     {
       name: 'エラー',
       value: 'データが見つかりません',
     },
   ];
+
+  if(dayjs.getCurrentDay()==0 || dayjs.getCurrentDay()==6){//土日
+    return [
+      {
+        name: '食堂',
+        value: json["holiday"].restaurant,
+      },
+      {
+        name: '喫茶',
+        value: json["holiday"].cafeteria,
+      },
+      {
+        name: '売店',
+        value: json["holiday"].shop,
+      },
+    ];
+  }
+  else{//平日
+    return [
+      {
+        name: '食堂',
+        value: json["weekday"].restaurant,
+      },
+      {
+        name: '喫茶',
+        value: json["weekday"].cafeteria,
+      },
+      {
+        name: '売店',
+        value: json["weekday"].shop,
+      },
+    ];
+  }
+
 };
 
 // ここから下はdiscord.js

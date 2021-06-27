@@ -18,6 +18,10 @@ export class DayjsWrapper {
     return dayjs.tz().format(format);
   }
 
+  getCurrentDay() {
+    return dayjs.day();
+  }
+
   isBetween(start, end) {
     return dayjs.tz().isBetween(start, end, 'year', '[]');
   }
